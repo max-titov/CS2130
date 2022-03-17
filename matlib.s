@@ -10,7 +10,14 @@ product:
 	# TO DO: write this function
 	
 	xorq	%rax, %rax
-	retq
+	Start:
+		cmpq $0, %rsi
+		jle End
+		addq % r8, %rax
+		subq $1, %rsi
+		jmp Start
+	End:
+		retq
 
 ############################################################
 ##                 end of product routine                 ##
