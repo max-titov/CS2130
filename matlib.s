@@ -13,7 +13,7 @@ product:
 	Start:
 		cmpq $0, %rsi
 		jle End
-		addq % r8, %rax
+		addq % rdi, %rax
 		subq $1, %rsi
 		jmp Start
 	End:
@@ -35,6 +35,15 @@ power:
 	# TO DO: write this function
 
 	xorq	%rax, %rax
+	cmpq $1, %rsi
+	je final
+	subq $1, %rsi
+	callq power
+	movq %rax, %rsi
+	callq product
+	retq
+final:
+	movq %rdi, %rax
 	retq
 
 ############################################################
