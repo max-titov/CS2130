@@ -10,7 +10,7 @@ void main(){
 	char inboxBuffer[4096];
 	snprintf(inboxBuffer, 4096, "/bigtemp/%s/%s.chat",
 		"cso1",
-		*me,
+		*me
 	);
 	FILE *inbox = fopen(inboxBuffer, "r");
 	char messageBuffer[4096];
@@ -32,13 +32,13 @@ void main(){
 	char recieverBuffer[4096];
 	snprintf(recieverBuffer, 4096, "/bigtemp/%s/%s.chat",
 		"cso1",
-		*line,
+		*line
 	);
 	FILE *outbox = fopen(recieverBuffer, "a");
 
 	printf("What do you want to say?");
 	
-	*input = fopen(stdin, "r");
+	input = fopen(stdin, "r");
 	char toSendBuffer[4096];
 	char *toSend = fgets(toSendBuffer, 4096, inbox);
 
