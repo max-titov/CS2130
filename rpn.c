@@ -60,7 +60,7 @@ void addToStack(int* stack, int* sIndex, char* token, int* tIndex, int should_pr
     int numConverted = strtol(strToConvert, &ptr, 10);
     stack[*sIndex]=numConverted;
     *sIndex+=1; //increment stack pointer
-    *tIndex==0; //reset token pointer
+    *tIndex=0; //reset token pointer
     //token =(char*)calloc(15,sizeof(char));
     if(should_print_stack){ 
         printStack(stack, *sIndex);
@@ -87,8 +87,7 @@ int main()
         //     char c = line[i];
         //     printf("%c,",c);
         // }
-        for (int i = 0; line[i]!= '\0'; i++){
-    
+        for (int i = 0; i<inputSize; i++){
             char c = line[i];
             //check for types
             int isNum = isANumber(c);
@@ -101,7 +100,7 @@ int main()
                 }
                 continue;//ignore and move to next char
             }
-            else if(!(isNum||isOp)){ // if neither a number or operator
+            else if(!(isNum||isOp) || line[i]= '\0'){ // if neither a number or operator or is EOF
                 if(tIndex>0){//if there is anything in the token
                     addToStack(stack,&sIndex,token,&tIndex,should_print_stack);
                     tIndex=0;
