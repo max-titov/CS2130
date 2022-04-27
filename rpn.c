@@ -76,7 +76,7 @@ int main()
     int sIndex = 0;
     
     
-    int should_print_stack = 0; //1 = print stack on change
+    int should_print_stack = 1; //1 = print stack on change
     int keepLooping = 1;
     while(keepLooping){
         int inputSize = 250;
