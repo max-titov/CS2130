@@ -100,7 +100,7 @@ int main()
                 }
                 continue;//ignore and move to next char
             }
-            else if(!(isNum||isOp) || line[i]= '\0'){ // if neither a number or operator or is EOF
+            else if(!(isNum||isOp) || line[i]== '\0'){ // if neither a number or operator or is EOF
                 if(tIndex>0){//if there is anything in the token
                     addToStack(stack,&sIndex,token,&tIndex,should_print_stack);
                     tIndex=0;
