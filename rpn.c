@@ -1,6 +1,22 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
+
+int sIndex = -1;
+int cap = 16;
+
+void *push(int* stack, int num) {
+    if(sIndex == cap-1){
+        cap *= 2;
+        stack = realloc(stack, cap*4);
+    }
+    stack[++sIndex] = num;
+}
+
+int pop(int* stack) {
+    return stack[sIndex--];
+}
 
 int isANumber(char c)
 {
@@ -18,122 +34,68 @@ int isOperator(char s)
     return 0;
 }
 
-
-int evaluate(int* stack, int* sIndex, char op)
+void evaluate(int* stack, int num1, int num2, char op)
 {
-    if (*sIndex<=1){
-        return 0;//not enough numbers to do math on
-    }
     if(op=='-'){
-        //printf("subtract %d from %d\n",stack[*sIndex-1],stack[*sIndex-2]);
-        stack[*sIndex-2]-=stack[*sIndex-1];
+        push(stack, num1-num2);
     }else if(op=='+'){
-        stack[*sIndex-2]+=stack[*sIndex-1];
+        push(stack, num1+num2);
     }else if(op=='*'){
-        stack[*sIndex-2]*=stack[*sIndex-1];
+        push(stack, num1*num2);
     }else if(op=='/'){
-        stack[*sIndex-2]/=stack[*sIndex-1];
+        push(stack, num1/num2);
     }
-    stack[*sIndex-1]=0;
-    *sIndex-=1;
-    return 1; //success
 }
 
 void printStack(int* stack, int sIndex){
-    printf("[ ");
-    for(int i = 0; i<sIndex;i++){
-        printf("%d",stack[i]);
-        if(i<sIndex-1){
-            printf(", ");
-        }
+    char b4='[';
+    for(int i=0; i<sIndex; i+=1) { 
+        printf("%c %d", b4, stack[i]); 
+        b4=','; 
     }
-    printf(" ]\n");
+    puts(" ]");
 }
-
-//pass variables as reference
-void addToStack(int* stack, int* sIndex, char* token, int* tIndex, int should_print_stack){
-    token[*tIndex]='\0'; // add OEF
-    *tIndex+=2;
-    char *strToConvert= (char*)calloc(*tIndex, sizeof(char));
-    char *ptr;
-    strcpy(strToConvert, token);
-    int numConverted = strtol(strToConvert, &ptr, 10);
-    stack[*sIndex]=numConverted;
-    *sIndex+=1; //increment stack pointer
-    *tIndex=0; //reset token pointer
-    //token =(char*)calloc(15,sizeof(char));
-    if(should_print_stack){ 
-        printStack(stack, *sIndex);
-    }
-}
-
 
 int main()
 {
-    char* token =(char*)calloc(15,sizeof(char));
+    int* stack = (int*) malloc(cap*4);
+    char* token = (char*) malloc(128);
     int tIndex = 0;
-    int* stack =(int*)calloc(256,sizeof(int)); 
-    int sIndex = 0;
+    int line;
     
-    
-    int should_print_stack = 1; //1 = print stack on change
-    int keepLooping = 1;
-    while(keepLooping){
-        int inputSize = 250;
-        char line[inputSize];    
-        fgets(line, inputSize, stdin);
+    while(1) {
+        line = scanf("%c",token+tIndex);
+        if(line != EOF && !isspace(token[tIndex])) {
+            tIndex++;
+            continue;
+        }
+        else if(line != EOF &&tIndex == 0) {
+            continue;
+        }
+        else if(isANumber(token[tIndex-1])) {
+            token[tIndex] = '\0';
+            push(stack, atoi(token)); //convert to int and add to stack
+        }
+        else if(tIndex==1 && isOperator(token[tIndex-1])){ 
+            if(sIndex < 1) break; // not enough numbers to do operation
+            int num1 = pop(stack);
+            int num2 = pop(stack);
+            evaluate(stack, num1, num2, token[tIndex-1]);
+        } 
+        else {
+            break;
+        }
         
-        // for (int i = 0; line[i]!= '\0'; i++){
-        //     char c = line[i];
-        //     printf("%c,",c);
-        // }
-        for (int i = 0; i<inputSize; i++){
-            char c = line[i];
-            //check for types
-            int isNum = isANumber(c);
-            int isOp = isOperator(c);
-            if(c == ' '){ //if there is a space
-                if(tIndex>0){//if there is anything in the token
-                    //printf("Added Token: %s\n",token);
-                    addToStack(stack,&sIndex,token,&tIndex,should_print_stack);
-                    tIndex=0;
-                }
-                continue;//ignore and move to next char
-            }
-            else if(!(isNum||isOp) || line[i]== '\0'){ // if neither a number or operator or is EOF
-                if(tIndex>0){//if there is anything in the token
-                    addToStack(stack,&sIndex,token,&tIndex,should_print_stack);
-                    tIndex=0;
-                }
-                if(c!=10){//if not new line symbol
-                    keepLooping=0;//jump out of while loop
-                }
-                break;//invalid character or end of line reached so exit for loop
-            }
-            else if(isNum){ // if its a num
-                token[tIndex++] = c; // add to token
-            }
-            else if(isOp){
-                if(c=='-' && !(line[i+1]== '\\'&&line[i+2]== '0') &&isANumber(line[i+1])){//if the '-' is the start of a negative number
-                    token[tIndex++]='-';
-                }
-                else{
-                    int completed = evaluate(stack,&sIndex,c);
-                    if(!completed){ // evaluation did not complete because there were too many ops
-                        keepLooping=0;
-                        break;
-                    }
-                    if(should_print_stack){ 
-                        printStack(stack, sIndex);
-                    }
-                }
-            }
-            
+        
+        tIndex = 0;
+        if(line == EOF) {
+            break;
         }
     }
-    if(!should_print_stack){ 
-        printStack(stack, sIndex);
+    char b4='[';
+    for(int i=0; i<sIndex; i+=1) { 
+        printf("%c %d", b4, stack[i]); 
+        b4=','; 
     }
-    
-    return 0;
+    puts(" ]");
 }
