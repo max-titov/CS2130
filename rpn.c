@@ -6,7 +6,7 @@
 int sIndex = -1;
 int cap = 16;
 
-void *push(int* stack, int num) {
+void push(int* stack, int num) {
     if(sIndex == cap-1){
         cap *= 2;
         stack = realloc(stack, cap*4);
@@ -47,15 +47,6 @@ void evaluate(int* stack, int num1, int num2, char op)
     }
 }
 
-void printStack(int* stack, int sIndex){
-    char b4='[';
-    for(int i=0; i<sIndex; i+=1) { 
-        printf("%c %d", b4, stack[i]); 
-        b4=','; 
-    }
-    puts(" ]");
-}
-
 int main()
 {
     int* stack = (int*) malloc(cap*4);
@@ -93,9 +84,6 @@ int main()
         }
     }
     char b4='[';
-    for(int i=0; i<sIndex; i+=1) { 
-        printf("%c %d", b4, stack[i]); 
-        b4=','; 
-    }
-    puts(" ]");
+	for(int i=0; i<=sIndex; i+=1) { printf("%c %d", b4, stack[i]); b4=','; }
+	puts(" ]");
 }
