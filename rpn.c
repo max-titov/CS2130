@@ -37,13 +37,13 @@ int isOperator(char s)
 void evaluate(int* stack, int num1, int num2, char op)
 {
     if(op=='-'){
-        push(stack, num1-num2);
+        push(stack, num2-num1);
     }else if(op=='+'){
-        push(stack, num1+num2);
+        push(stack, num2+num1);
     }else if(op=='*'){
-        push(stack, num1*num2);
+        push(stack, num2*num1);
     }else if(op=='/'){
-        push(stack, num1/num2);
+        push(stack, num2/num1);
     }
 }
 
