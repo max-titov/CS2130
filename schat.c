@@ -24,7 +24,7 @@ void serverSide(){
 
 	listen(listener , 20);
 
-	system("host: $HOSTNAME");
+	system("host $HOSTNAME");
 
 	printf("listening on port: %d\n", port);
 
